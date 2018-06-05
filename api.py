@@ -15,5 +15,5 @@ API.add_resource(Debug, '/api/debug')
 
 if __name__ == '__main__':
     Scheduler.start()
-    APP.run(debug=False)
+    APP.run(host='0.0.0.0', port='5000',debug=False)
     

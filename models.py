@@ -19,10 +19,3 @@ class Location(BASE):
     datetime = Column(DateTime, default=func.now())
     latitude = Column(Float(10))
     longitude = Column(Float(10))
-
-if __name__ == "__main__":
-    from sqlalchemy import create_engine
-    from config import DB_URI
-    ENGINE = create_engine(DB_URI)
-    BASE.metadata.drop_all(ENGINE)
-    BASE.metadata.create_all(ENGINE)
