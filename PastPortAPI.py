@@ -1,9 +1,8 @@
-"""Runable for API"""
+"""API Runable"""
 
+from api import app, sched
 
-from app import APP
-from app.scheduler import SCHEDULER
-
-SCHEDULER.start()
-APP.run()
-
+sched.safe_start()
+#context = ('cert/cert.pem', 'cert/key.pem')
+# place into the run function: ssl_context=context
+app.run(host='0.0.0.0', port=5000)

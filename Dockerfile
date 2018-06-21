@@ -24,8 +24,20 @@ RUN apt-get update && apt-get install -y locales \
     && locale-gen
 RUN pip install --upgrade pip
 
-COPY . .
+# create app folder
+RUN mkdir /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+# change to app as working directory
+WORKDIR /app
 
-CMD python api.py
+# copy api into app folder
+COPY . /app
+
+# get pipenv
+RUN pip install pipenv
+
+# run the library installation
+RUN pipenv install --system --deploy --ignore-pipfile
+
+# start api
+CMD python PastPortAPI.py

@@ -1,10 +1,10 @@
 """Opens private config values as class"""
 
 import json
-import logging
 import sys
 
 import urllib3
+from urllib3.util.retry import Retry
 
 if sys.version_info[0] < 3:
     from urllib import quote_plus
@@ -14,7 +14,8 @@ else:
 urllib3.disable_warnings()
 
 class Config(object):
-    with open("./config.json", 'r') as stream:
+    """Object to control and format configuration variables"""
+    with open("./config/config.json", 'r') as stream:
         __vars = json.load(stream)
 
     ENV=__vars['ENV']
@@ -29,14 +30,8 @@ class Config(object):
     ERR=__vars['ERR']
 
     __quote = quote_plus('DRIVER='+DB['DRIVER']+
-            ';SERVER='+DB['SERVER']+';PORT=1433;DATABASE='+DB['DATABASE']+
-            ';UID='+DB['UID']+';PWD='+DB['PWD'])
-    DB['URI'] = 'mssql+pyodbc:///?odbc_connect=%s' % __quote
+            ';SERVER='+DB['SERVER']+';PORT=1433;DATABASE='
+            +DB['DATABASE']+';UID='+DB['UID']+';PWD='+DB['PWD'])
+    DB['URI'] = 'mssql+pyodbc:///?odbc_connect=%s' % __quote        
 
-    if(LOGGING):
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format='[%(levelname)s] %(threadName)s: %(message)s')
-        
-
-        
+    Retry.BACKOFF_MAX = CONNECTION['BACKOFF_MAX']
