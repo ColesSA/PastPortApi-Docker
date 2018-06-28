@@ -32,7 +32,7 @@ conn = SafeSession(Config.WEB['UID'],
                    Config.CONNECTION['BACKOFF_FACTOR'], 
                    Config.CONNECTION['STATUS_FORCELIST'])
 
-if Config.LOGGING:
+if(Config.LOGGING):
     smtp_handler = SMTPHandler(
         mailhost=Config.ERR['MAIL_HOST'],
         fromaddr=Config.ERR['FROM_ADDR'],
@@ -42,7 +42,6 @@ if Config.LOGGING:
 
     for logger in (
         logging.getLogger(),
-        logging.getLogger('sqlalchemy'),
         logging.getLogger('flask_cors'),
         logging.getLogger('click'),
     ):

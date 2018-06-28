@@ -8,6 +8,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from api.logger import time_function
 from api.models import Location
 
 class SafeSession(object):
@@ -25,7 +26,7 @@ class SafeSession(object):
             backoff_factor {float} -- {backoff factor} * (2 ^ ({number of total retries} - 1)) (default: {.5})
             status_forcelist {[type]} -- List of status codes to retry connection on (default: [500,503,504])"""
 
-    def __init__(self, uid, pwd, verify, max_retries=3, backoff_factor=.5, status_forcelist=None):        
+    def __init__(self, uid, pwd, verify, max_retries=3, backoff_factor=.5, status_forcelist=None):
         self.auth = (uid,pwd)
         self.verify = verify
         self.max_retries = max_retries
@@ -53,9 +54,9 @@ class SafeSession(object):
         adapter = HTTPAdapter(max_retries=retry)
         session.mount('http://', adapter)
         session.mount('https://', adapter)
-        return session       
+        return session
 
-    def current_location(self, url, to_database=False):
+    def current_location(self, url, to_database=True):
         """Uses safe session to store the current location of the barge to a database.
         
         Arguments:
@@ -80,4 +81,25 @@ class SafeSession(object):
         finally:
             _t1 = time.time()
             logging.debug('Took %d seconds', (_t1-_t0))
-    
+
+    @time_function
+    def get_from(self, url):
+        """Runs a get request to a safe session
+        
+        Arguments:
+            url {str} -- URL to be sent get request
+
+        Returns:
+            response {Response} -- Requests response object
+        """
+        _s = requests.Session()
+        _s.auth = self.auth
+        logging.debug('Establishing Connection')
+        try:
+            _req = self.requests_retry_session(session=_s).get(url, verify=self.verify)
+            _req.raise_for_status()
+        except Exception as _x:
+            logging.exception('Connection failed: %s', (_x))
+        else:
+            logging.debug('Connection Successful: %s', (_req.status_code))
+            return _req
