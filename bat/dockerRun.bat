@@ -1,1 +1,1 @@
-docker run -p 5000:5000 -it api:release
+docker run --network DockerVLAN -p 80:5000 piemaster651/api:1.0.1 

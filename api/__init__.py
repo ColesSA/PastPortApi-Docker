@@ -14,14 +14,14 @@ from api.scheduler import Scheduler
 from flask_cors import CORS
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*", 'methods': 'GET', 'supports_credentials': True}})
+cors = CORS(app, resources={r"/api/v2/location*": {"origins": "*", 'methods': 'GET', 'supports_credentials': True}})
 api = Api(app)
 
 app.config.from_object(Config)
 
 api.add_resource(LocationsLast, '/api/v2/location/last')
-api.add_resource(LocationsList, '/api/v2/location/all')
-api.add_resource(LocationNow, '/api/v2/location/now')
+#api.add_resource(LocationsList, '/api/v2/location/all')
+#api.add_resource(LocationNow, '/api/v2/location/now')
 
 sched = Scheduler(Config.WEB['URL'], Config.SCHEDULER_DELAY_TIME)
 

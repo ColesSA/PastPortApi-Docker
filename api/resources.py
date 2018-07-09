@@ -1,11 +1,11 @@
 """API Routing"""
-
+import logging
 
 from flask_restful import Resource, marshal_with
 
 import api
 from api.config import Config
-from api.database import session, to_database
+from api.database import to_database, lastSession, allSession
 from api.models import Loc_Fields, Location, Coordinate
 
 class LocationsLast(Resource):
@@ -21,7 +21,12 @@ class LocationsLast(Resource):
         Returns:
             json -- location
         """
-        return session.query(Location).order_by(-Location.id).first()
+        try:
+            last_location = lastSession.query(Location).order_by(-Location.id).first()
+            logging.debug('Obtained last location from database')
+            return last_location
+        except Exception as _x:
+            logging.exception('Database last location error: %s', (_x))
 
 class LocationsList(Resource):
     """All locations stored in the database
@@ -36,7 +41,12 @@ class LocationsList(Resource):
         Returns:
             json -- location list
         """
-        return session.query(Location).all()
+        try:
+            all_locations = allSession.query(Location).all()
+            logging.debug('Obtained all locations from database')
+            return all_locations
+        except Exception as _x:
+            logging.exception('Database all locations error: %s', (_x))
 
 class LocationNow(Resource):
     """Stores the current location into the database
